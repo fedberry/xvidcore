@@ -1,22 +1,14 @@
 %global debug_package %{nil}
 %define soname  4
- 
-Name:           xvidcore
-Version:        1.3.5
-Release:        3%{?dist}
-Summary:        MPEG-4 Simple and Advanced Simple Profile codec
 
-Group:          System Environment/Libraries
-License:        GPLv2+
-URL:            http://www.xvid.org/
-Source:		http://downloads.xvid.org/downloads/xvidcore-%{version}.tar.bz2
-Source1:        baselibs.conf
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
-
-%ifarch %{ix86} x86_64
-BuildRequires:  nasm >= 2.0
-%endif
+Name:       xvidcore
+Version:    1.3.5
+Release:    4%{?dist}
+Summary:    MPEG-4 Simple and Advanced Simple Profile codec
+Group:      System Environment/Libraries
+License:    GPLv2+
+URL:        http://www.xvid.org/
+Source:     http://downloads.xvid.org/downloads/xvidcore-%{version}.tar.bz2
 
 Provides:       xvid = %{version}
 Obsoletes:      xvid < %{version}
@@ -30,12 +22,13 @@ unrivalled quality Xvid has gained great popularity and is used in many
 other GPLed applications, like e.g. Transcode, MEncoder, MPlayer, Xine and
 many more.
 
-%package        devel
-Summary:        Development files for the Xvid video codec
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
 
-%description    devel
+%package devel
+Summary: Development files for the Xvid video codec
+Group: Development/Libraries
+Requires:   %{name} = %{version}-%{release}
+
+%description devel
 This package contains header files, static library and API
 documentation for the Xvid video codec.
 
@@ -44,8 +37,8 @@ documentation for the Xvid video codec.
 %setup -q -n %{name}
 sed -i '1i%%ifidn __OUTPUT_FORMAT__,elf\nSECTION .note.GNU-stack noalloc progbits noexec nowrite\n%%endif' src/*/*_asm/*.asm
 
-%build
 
+%build
 pushd build/generic
 %configure
 make %{?_smp_mflags}
@@ -71,26 +64,25 @@ ln -s libxvidcore.so.%{soname}.* libxvidcore.so.%{soname}
 ln -s libxvidcore.so.%{soname} libxvidcore.so
 popd #libdir
 
-%clean
-[ %{buildroot} != "/" ] && rm -rf %{buildroot}
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 
 %files
-%defattr(-,root,root,-)
 %doc LICENSE README AUTHORS ChangeLog
 %{_libdir}/libxvidcore.so.*
 
+
 %files devel
-%defattr(-,root,root,-)
 %doc CodingStyle TODO examples/
 %{_includedir}/xvid.h
 %{_libdir}/libxvidcore.so
 
 
 %changelog
+* Fri Aug 03 2018 Vaughan Agrez <devel at agrez dot net> 1.3.5-4
+- Import into Fedberry (thanks UnitedRPMS)
+- Clean spec
 
 * Sun Mar 04 2018 David Vásquez <davidva AT tutanota DOT com> - 1.3.5-3
 - Rebuilt
